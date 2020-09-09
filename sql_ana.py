@@ -103,18 +103,20 @@ class main():
         print('处理工程：',proname_raw)
         gpstab = 'gps_'+proname
         lvxtab = 'lvx_'+proname
-        sql= '''SELECT lvx.daysec,lvx.X1, lvx.Y1,lvx.Z1,lvx.hell AS he1,gps.X1 AS X2,gps.Y1 AS Y2,gps.Z1 AS Z2, gps.[H-Ell] AS he2, abs(lvx.hell - gps.[H-Ell]) AS h12,gps.ACC,gps.SPEED,gps.Star,gps.LocMode,  gps.LocAcc,gps.RollAcc,gps.PitchAcc,gps.HdingAcc,abs(lvx.roll - gps.Roll) AS rolldis,abs(lvx.pitch - gps.Pitch) AS pitchdis,abs(lvx.heading - gps.Heading) AS headingdis FROM lvxtabname lvx, gpstabname gps WHERE lvx.daysec = gps.GPS;'''
+        sql= 'SELECT lvx.daysec,lvx.X1, lvx.Y1,lvx.Z1,lvx.hell AS he1,gps.X1 AS X2,gps.Y1 AS Y2,gps.Z1 AS Z2, gps.[H-Ell] AS he2, abs(lvx.hell - gps.[H-Ell]) AS h12,lvx.roll - gps.Roll - (%f) AS rolldis,lvx.pitch - gps.Pitch- (%f) AS pitchdis,lvx.heading - gps.Heading- (%f) AS headingdis, gps.acc,gps.speed,gps.star,gps.locmode,gps.locacc/100,gps.rollacc,gps.pitchacc,gps.hdingacc FROM lvxtabname lvx, gpstabname gps WHERE lvx.daysec = gps.GPS;' %(self.sys_prh[1],self.sys_prh[0],self.sys_prh[2])
         sql = sql.replace('gpstabname', gpstab).replace('lvxtabname', lvxtab)
         a=self.cur.execute(sql)
         outputlist = []
         for var in a:
             var_list = list(var)
-            H_dis =math.sqrt(math.pow((var_list[1]-var_list[5]),2) + math.pow((var_list[2]-var_list[6]),2))-0.15
+            H_dis =math.sqrt(math.pow((var_list[1]-var_list[5]),2) + math.pow((var_list[2]-var_list[6]),2))
             var_list.append(H_dis)
             outputlist.append(var_list)
         # print(outputlist[0:2])
-        index = ['daysec','X1','Y1','Z1','he1','X2','Y2','Z2','he2','h12','ACC','SPEED','Star','LocMode','LocAcc','RollAcc','PitchAcc','HdingAcc','roll_dis','pitch_dis','heading_dis','H_dis']
+        index = ['daysec','X1','Y1','Z1','he1','X2','Y2','Z2','he2','h12','roll_dis','pitch_dis','heading_dis','ACC','SPEED','Star','LocMode','LocAcc','RollAcc','PitchAcc','HdingAcc','H_dis']
         data_df = pd.DataFrame(outputlist, columns=index)
+        # print(data_df['ACC'].head())
+        # pdb.set_trace()
         data_locre = pd.DataFrame(data_df, columns=['h12','H_dis','LocAcc','ACC'])
         data_locre.corr().to_csv(os.path.join(self.path,proname+'_locrelation.csv'), index=True, header=True)
         # data_angre = pd.DataFrame(data_df, columns=['roll_dis','pitch_dis','heading_dis','LocAcc','ACC','RollAcc','PitchAcc','HdingAcc'])
@@ -198,7 +200,7 @@ class main():
         plt.subplot(8,1,6)
         plt.ylabel('ACC', fontdict={'size':ylabelsize})
         plt.xlabel('GpsTime(天秒)', fontdict={'size':xlabelsize})
-        plt.ylim(0.4,2)
+        # plt.ylim(0.4,2)
         # plt.title(proname+'-高程分布', fontdict={'size':30})
         plt.plot(data_df['daysec'].values, data_df['ACC'].values, color='b') 
         plt.tick_params(labelsize=ticksize)   #设置刻度大小
@@ -216,7 +218,7 @@ class main():
         print('处理工程：',proname_raw)
         gpstab = 'gps_'+proname
         lvxtab = 'lvx_'+proname
-        sql= '''SELECT lvx.daysec,lvx.X1, lvx.Y1,lvx.Z1,lvx.hell AS he1,gps.X1 AS X2,gps.Y1 AS Y2,gps.Z1 AS Z2, gps.[H-Ell] AS he2, abs(lvx.hell - gps.[H-Ell]) AS h12,gps.ACC,gps.SPEED,gps.Star,gps.LocMode,  gps.LocAcc,gps.RollAcc,gps.PitchAcc,gps.HdingAcc,abs(lvx.roll - gps.Roll-1.46170284) AS rolldis,abs(lvx.pitch - gps.Pitch+0.2891359) AS pitchdis,abs(lvx.heading - gps.Heading-0.29108003) AS headingdis FROM lvxtabname lvx, gpstabname gps WHERE lvx.daysec = gps.GPS;'''
+        sql= 'SELECT lvx.daysec,lvx.X1, lvx.Y1,lvx.Z1,lvx.hell AS he1,gps.X1 AS X2,gps.Y1 AS Y2,gps.Z1 AS Z2, gps.[H-Ell] AS he2, lvx.hell - gps.[H-Ell] AS h12,lvx.roll - gps.Roll - (%f) AS rolldis,lvx.pitch - gps.Pitch- (%f) AS pitchdis,lvx.heading - gps.Heading- (%f) AS headingdis, gps.acc,gps.speed,gps.star,gps.locmode,gps.locacc,gps.rollacc,gps.pitchacc,gps.hdingacc FROM lvxtabname lvx, gpstabname gps WHERE lvx.daysec = gps.GPS;' %(self.sys_prh[1],self.sys_prh[0],self.sys_prh[2])
         sql = sql.replace('gpstabname', gpstab).replace('lvxtabname', lvxtab)
         a=self.cur.execute(sql)
         outputlist = []
@@ -226,7 +228,7 @@ class main():
             var_list.append(H_dis)
             outputlist.append(var_list)
         # print(outputlist[0:2])
-        index = ['daysec','X1','Y1','Z1','he1','X2','Y2','Z2','he2','h12','ACC','SPEED','Star','LocMode','LocAcc','RollAcc','PitchAcc','HdingAcc','roll_dis','pitch_dis','heading_dis','H_dis']
+        index = ['daysec','X1','Y1','Z1','he1','X2','Y2','Z2','he2','h12','roll_dis','pitch_dis','heading_dis','ACC','SPEED','Star','LocMode','LocAcc','RollAcc','PitchAcc','HdingAcc','H_dis']
         data_df = pd.DataFrame(outputlist, columns=index)
         data_df = data_df[(data_df['heading_dis']<10)&(data_df['heading_dis']>-10)]
         # data_locre = pd.DataFrame(data_df, columns=['h12','H_dis','LocAcc','ACC'])
@@ -566,39 +568,42 @@ class main():
         print(proname+'场景误差箱图-scene.jpg 保存成功！')
         plt.clf()
     
-    #计算参考指标与误差得相关性
+    #计算参考指标与误差相关性
     def relation(self,proname_raw):
         proname = proname_raw.replace('-','')
         gpstab = 'gps_'+proname
         lvxtab = 'lvx_'+proname
-        #场景1数据提取
-        sql= '''SELECT lvx.daysec,lvx.X1, lvx.Y1,lvx.Z1,lvx.hell AS he1,gps.X1 AS X2,gps.Y1 AS Y2,gps.Z1 AS Z2, gps.[H-Ell] AS he2, lvx.hell - gps.[H-Ell] AS h12,lvx.roll - gps.Roll-1.46170284 AS rolldis,lvx.pitch - gps.Pitch+0.2891359 AS pitchdis,lvx.heading - gps.Heading-0.29108003 AS headingdis,gps.ACC,gps.SPEED,gps.Star,gps.LocMode,gps.LocAcc,gps.RollAcc,gps.PitchAcc,gps.HdingAcc FROM lvxtabname lvx, gpstabname gps WHERE lvx.daysec = gps.GPS;'''
+        sql= 'SELECT lvx.daysec,lvx.X1, lvx.Y1,lvx.Z1,lvx.hell AS he1,gps.X1 AS X2,gps.Y1 AS Y2,gps.Z1 AS Z2, gps.[H-Ell] AS he2, lvx.hell - gps.[H-Ell] AS h12,lvx.roll - gps.Roll - (%f) AS rolldis,lvx.pitch - gps.Pitch- (%f) AS pitchdis,lvx.heading - gps.Heading- (%f) AS headingdis, gps.acc,gps.speed,gps.star,gps.locmode,gps.locacc,gps.rollacc,gps.pitchacc,gps.hdingacc FROM lvxtabname lvx, gpstabname gps WHERE lvx.daysec = gps.GPS and abs(lvx.X1-gps.X1)<15 and abs(lvx.Y1-gps.Y1)<15;' %(self.sys_prh[1],self.sys_prh[0],self.sys_prh[2])
         sql = sql.replace('gpstabname', gpstab).replace('lvxtabname', lvxtab)
         a=self.cur.execute(sql)
         outputlist = []
         for var in a:
             var_list = list(var)
-            H_dis =math.sqrt(math.pow((var_list[1]-var_list[5]),2) + math.pow((var_list[2]-var_list[6]),2))-0.15
+            H_dis =math.sqrt(math.pow((var_list[1]-var_list[5]),2) + math.pow((var_list[2]-var_list[6]),2))
             var_list.append(H_dis)
             outputlist.append(var_list)
         index = ['daysec','X1','Y1','Z1','he1','X2','Y2','Z2','he2','h12','roll_dis','pitch_dis','heading_dis','ACC','speed','star','locmode','locacc','rollacc','pitchacc','hdingacc','H_dis']
+        print(outputlist[0])
+        # pdb.set_trace()
         data_df = pd.DataFrame(outputlist, columns=index)
-        data01 = data_df[data_df['H_dis']<=1]
-        data12 = data_df[(data_df['H_dis']>1)&(data_df['H_dis']<=2)]
-        data23 = data_df[(data_df['H_dis']>2)&(data_df['H_dis']<=3)]
-        data34 = data_df[(data_df['H_dis']>3)&(data_df['H_dis']<=4)]
-        data4 = data_df[data_df['H_dis']>4]
+        Hdis_in = [1.0,1.5,2.0,2.5]
+        data01 = data_df[data_df['H_dis']<=Hdis_in[0]]
+        data12 = data_df[(data_df['H_dis']>Hdis_in[0])&(data_df['H_dis']<=Hdis_in[1])]
+        data23 = data_df[(data_df['H_dis']>Hdis_in[1])&(data_df['H_dis']<=Hdis_in[2])]
+        data34 = data_df[(data_df['H_dis']>Hdis_in[2])&(data_df['H_dis']<=Hdis_in[3])]
+        data4 = data_df[data_df['H_dis']>Hdis_in[3]]
         plt.figure(1, figsize=(8, 10))
         plt.rcParams['axes.unicode_minus'] = False 
         plt.ylabel('LocAcc', fontdict={'size':22})
         plt.title(proname+'_水平定位误差', fontdict={'size':30})
-        plt.boxplot([data01['locacc'],data12['locacc'],data23['locacc'],data34['locacc'],data4['locacc']],labels=['0-1','1-2','2-3','3-4','4-'])
+        plt.boxplot([data01['locacc'],data12['locacc'],data23['locacc'],data34['locacc'],data4['locacc']],labels=['0-'+str(Hdis_in[0]),str(Hdis_in[0])+'-'+str(Hdis_in[1]),str(Hdis_in[1])+'-'+str(Hdis_in[2]),str(Hdis_in[2])+'-'+str(Hdis_in[3]),str(Hdis_in[3])+'-'])
         # plt.boxplot([data_df_roll['roll_dis'],data_df_pitch['pitch_dis'],data_df_heading['heading_dis']],labels=['Roll','Pitch','Heading'])
 
         plt.tick_params(labelsize=23)   #设置刻度大小
         plt.savefig(self.savepath+'/'+proname+'水平定位误差区段.jpg',bbox_inches='tight')
         print(proname+'水平定位误差区段.jpg 保存成功！')
         plt.cla()
+        pdb.set_trace()
 
         #h12
         data_h01 = data_df[data_df['h12']<=1]
@@ -727,11 +732,11 @@ class main():
                 # proname = os.listdir(self.path)[0]
                 self.scene_plot2(var,scene[i][0],scene[i][1],scene[i][2])
                 i=i+1
-    def pro5(self):
+    def pro5(self):  #定位与姿态角相关性分析
        for var in os.listdir(self.path):
            if os.path.isdir(self.path+var):
-            #    self.locrelation_rms(var) 
-               self.angrelation_rms(var)  
+               self.locrelation_rms(var)   #定位
+            #    self.angrelation_rms(var)   #姿态角
                
             #    rms = self.dis_sta(var)
             #    self.RMS.append(rms)
@@ -745,9 +750,9 @@ class main():
 
 if __name__ == '__main__':
     ex = main()
-    ex.pro1()
+    # ex.pro1()
     # ex.pro2()
     # ex.pro3()
     # ex.pro4()
-    # ex.pro5()
+    ex.pro5() #计算相关系数
     # ex.pro6()
