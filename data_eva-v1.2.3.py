@@ -44,7 +44,7 @@ class Main():
             print('连接失败！')
         self.gps_fps_raw = 25  #gps理论帧率
         self.img_fps_raw = 20 #img理论帧率
-        self.tar_epsg = 4548 #投影坐标系
+        self.tar_epsg = 4547 #投影坐标系
         self.src_epsg = 4326 #原始坐标系
         self.cur = self.conn.cursor()
         self.grs80 = (6378137, 298.257222100882711)
@@ -215,7 +215,7 @@ class Main():
         # data_df.drop(['SrcId', 'DevNum', 'Freq','Ver','CoorType'], axis=1, inplace=True) 
         # print(data_df.columns)
         # pd.io.sql.to_sql(data_df, tbname, con=self.conn, if_exists='replace')  #pandas写入数据库
-        gps_1 = data_df['GPS'].values
+        gps_1 = data_df['gps_time'].values
         # print(type(gps_1))
         gps_2 = np.delete(gps_1, 0, axis=0)
         gps_1 = np.delete(gps_1, len(gps_1)-1, axis=0)
@@ -242,7 +242,7 @@ class Main():
         del_arr = np.insert(del_arr,len(del_arr)-1,values=0,axis=0)
         data_df['gps_del'] = gps_del
         data_df['del_arr'] = del_arr
-        self.pose_maxloss_gpstime = data_df['GPS'][max_index]
+        self.pose_maxloss_gpstime = data_df['gps_time'][max_index]
         # print(data_df.dtypes)
         data_df.to_sql(tbname,con=self.conn, if_exists='replace')
         #绘图
@@ -255,7 +255,7 @@ class Main():
         # x_range = np.arange(len(datalist_float))
         # data_df['gps_del'].plot(kind='line')
         # plt.plot(x_range, data_df['gps_del'].values, color='b') 
-        plt.plot(data_df['GPS'], data_df['del_arr'].values, color='b') 
+        plt.plot(data_df['gps_time'], data_df['del_arr'].values, color='b') 
         plt.tick_params(labelsize=23)   #设置刻度大小
         # plt.xticks(fontdict={'size': 10})
         # plt.yticks(fontdict={'size': 10})
@@ -533,8 +533,6 @@ class Main():
                     self.readimgpos()
                     self.imgpos_sta()
                     self.savejson()
-           
-
                 # self.readimgpos()
                 # self.imgpos_sta()
                 # self.savejson()

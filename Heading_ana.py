@@ -9,21 +9,25 @@ import pandas as pd
 import numpy as np
 
 def ana():
-    path='D:/had/data/920POC/heading/'
-    file = 'heading_ana-wf.csv'
-    data_list = myfun.readcsv(path, file)
+    path='D:/had/data/bmwpoc/20200920'
+    file = '20200920-25hz-vel.txt'
+    data_list = myfun.readtxt(file, path, ' ')
     index = data_list[0]
     del data_list[0]
     Heading_output=[]
     for var in data_list:
-        Heading1=var[8]
-        v_n = float(var[-2])
-        v_e = float(var[-3])
-        v = float(var[-1])
+        try:
+            Heading1=float(var[4])
+            v_n = float(var[2])
+            v_e = float(var[1])
+            v = float(var[3])
+        except:
+            pass
+        
         if v>15:
         # try:
             if v_n ==0 and v_e>0:
-                print('test1')
+                # print('test1')
                 Heading2 = 90.0
             elif v_n ==0 and v_e<0:
                 print('test2')
@@ -40,18 +44,19 @@ def ana():
                 Heading2 = 360 + 180 * math.atan(v_e/v_n)/math.pi
             elif v_n<0 and v_e>0:
                 Heading2 = 180 + 180 * math.atan(v_e/v_n)/math.pi
-            dis = float(var[8])-Heading2 #航向-航迹
-            if abs(dis)>300:
-                dis = 0
+            dis = Heading1-Heading2 #航向-航迹
+            if dis>300:
+                dis = dis-360
         # except:
         #     print(v_n)
-            temp=[float(var[0]),float(var[3]),float(var[4]),float(var[5]),float(var[8]),float(var[10]),float(var[11]),float(var[12]),Heading2,dis]
+            temp=[float(var[0]),float(var[1]),float(var[2]),float(var[3]),float(var[4]),Heading2,dis]
             Heading_output.append(temp)
         
         # print(Heading1,Heading2)
         # pdb.set_trace()
         
-    index = ['gpstime','Hgt','lat','lon','Heading1','v_e','v_n','v','Heading2','dis']
+    # index = ['gpstime','Hgt','lat','lon','Heading1','v_e','v_n','v','Heading2','dis']
+    index = ['gpstime','v_e','v_n','v','Heading1','Heading2','dis']
     data_df = pd.DataFrame(Heading_output, columns=index)
     print('航向角-航迹角均值=',data_df['dis'].mean())
     # print(data_df['dis'].describe())

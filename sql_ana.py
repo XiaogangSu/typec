@@ -46,7 +46,9 @@ class main():
         # print('arr2:',arr2)
 
         # self.sys_prh = lj.finalcom(lvx_ex,typeC_ex)  #输出 pitch\roll\heading
-        self.sys_prh = [0.66475, 0.8507,0]
+        # self.sys_prh = [0.66475, 0.8507,0]
+        # self.sys_prh = [9.957097,2.219587,-3.3297] #5号车第一次
+        self.sys_prh = [10.90996, -0.2109, -0.7789]
         print('self.sysprh:',self.sys_prh)
         # self.sys_rph = [1.89611357,-0.08131809,0.53698999]  #roll\pitch\heading
         # self.savepath = './'+dbname
@@ -143,18 +145,20 @@ class main():
         # ax1.tick_params(labelsize=30)
         # plt.subplots_adjust(left=0.05, right=0.95, top=0.9, bottom=0.1)
         
-        ax2=fig.add_subplot(8,1,2)
-        ax2.set_title(proname, fontdict={'size':30})
-        ax2.set_ylabel('椭球高差', fontdict={'size':ylabelsize,'color':'b'})
-        ax2.set_xlabel('GpsTime(天秒)', fontdict={'size':xlabelsize})
-        # plt.xlabel('GpsTime(天秒)', fontdict={'size':22})
-        # plt.title(proname+'-高程分布', fontdict={'size':30})
-        ax2.plot(data_df['daysec'].values, data_df['h12'].values, color='b',label='高差') 
-        # ax2.plot(data_df['daysec'].values, data_df['LocAcc'].values, color='r',linewidth=3,label='LocAcc') 
-        # ax2.legend()
-        ax2.tick_params(labelsize=ticksize)   #设置刻度大小
+        # 椭球高差
+        # ax2=fig.add_subplot(8,1,2)
+        # ax2.set_title(proname, fontdict={'size':30})
+        # ax2.set_ylabel('椭球高差', fontdict={'size':ylabelsize,'color':'b'})
+        # ax2.set_xlabel('GpsTime(天秒)', fontdict={'size':xlabelsize})
+        # # plt.xlabel('GpsTime(天秒)', fontdict={'size':22})
+        # # plt.title(proname+'-高程分布', fontdict={'size':30})
+        # ax2.plot(data_df['daysec'].values, data_df['h12'].values, color='b',label='高差') 
+        # # ax2.plot(data_df['daysec'].values, data_df['LocAcc'].values, color='r',linewidth=3,label='LocAcc') 
+        # # ax2.legend()
+        # ax2.tick_params(labelsize=ticksize)   #设置刻度大小
         
         ax3=fig.add_subplot(8,1,3)
+        ax3.set_title(proname, fontdict={'size':30})
         ax3.set_ylabel('水平定位误差', fontdict={'size':ylabelsize,'color':'b'})
         ax3.set_xlabel('GpsTime(天秒)', fontdict={'size':xlabelsize})
         ax3.plot(data_df['daysec'].values, data_df['H_dis'].values, color='b',label='水平定位误差') 
@@ -162,22 +166,22 @@ class main():
         # ax3.legend()
         ax3.tick_params(labelsize=ticksize)
         
-        ax4=ax2.twinx()
-        # ax4=fig.add_subplot(8,1,4)
-        ax4.set_ylabel('LocACC', fontdict={'size':ylabelsize,'color':'red'})
-        # ax4.set_xlabel('GpsTime(天秒)', fontdict={'size':xlabelsize})
-        ax4.plot(data_df['daysec'].values, data_df['LocAcc'].values, color='r', linewidth=3) 
-        ax4.tick_params(labelsize=ticksize)
+        # ax4=ax2.twinx()
+        # # ax4=fig.add_subplot(8,1,4)
+        # ax4.set_ylabel('LocACC', fontdict={'size':ylabelsize,'color':'red'})
+        # # ax4.set_xlabel('GpsTime(天秒)', fontdict={'size':xlabelsize})
+        # ax4.plot(data_df['daysec'].values, data_df['LocAcc'].values, color='r', linewidth=3) 
+        # ax4.tick_params(labelsize=ticksize)
 
         ax4=ax3.twinx()
         # ax4=fig.add_subplot(8,1,4)
-        ax4.set_ylabel('LocACC', fontdict={'size':ylabelsize,'color':'red'})
+        ax4.set_ylabel('hacc', fontdict={'size':ylabelsize,'color':'red'})
         # ax4.set_xlabel('GpsTime(天秒)', fontdict={'size':xlabelsize})
         ax4.plot(data_df['daysec'].values, data_df['LocAcc'].values, color='r', linewidth=3) 
         ax4.tick_params(labelsize=ticksize)
 
         plt.subplot(8,1,4)
-        plt.ylabel('Star', fontdict={'size':ylabelsize})
+        plt.ylabel('收星数', fontdict={'size':ylabelsize})
         plt.xlabel('GpsTime(天秒)', fontdict={'size':xlabelsize})
         # plt.title(proname+'-高程分布', fontdict={'size':30})
         plt.plot(data_df['daysec'].values, data_df['Star'].values, color='b') 
@@ -191,19 +195,19 @@ class main():
         # plt.tick_params(labelsize=23)   #设置刻度大小
      
         plt.subplot(8,1,5)
-        plt.ylabel('LocMode', fontdict={'size':ylabelsize})
+        plt.ylabel('定位模式', fontdict={'size':ylabelsize})
         plt.xlabel('GpsTime(天秒)', fontdict={'size':xlabelsize})
         # plt.title(proname+'-高程分布', fontdict={'size':30})
         plt.plot(data_df['daysec'].values, data_df['LocMode'].values, color='b') 
         plt.tick_params(labelsize=ticksize)   #设置刻度大小
 
-        plt.subplot(8,1,6)
-        plt.ylabel('ACC', fontdict={'size':ylabelsize})
-        plt.xlabel('GpsTime(天秒)', fontdict={'size':xlabelsize})
-        # plt.ylim(0.4,2)
-        # plt.title(proname+'-高程分布', fontdict={'size':30})
-        plt.plot(data_df['daysec'].values, data_df['ACC'].values, color='b') 
-        plt.tick_params(labelsize=ticksize)   #设置刻度大小
+        # plt.subplot(8,1,6)
+        # plt.ylabel('ACC', fontdict={'size':ylabelsize})
+        # plt.xlabel('GpsTime(天秒)', fontdict={'size':xlabelsize})
+        # # plt.ylim(0.4,2)
+        # # plt.title(proname+'-高程分布', fontdict={'size':30})
+        # plt.plot(data_df['daysec'].values, data_df['ACC'].values, color='b') 
+        # plt.tick_params(labelsize=ticksize)   #设置刻度大小
         
         plt.savefig(self.savepath+'/'+proname+'误差相关性分析.jpg',bbox_inches='tight')
         print(proname+'误差相关性分析.jpg 保存成功！')
@@ -322,7 +326,7 @@ class main():
         lvxtab = 'lvx_'+proname
         # sql= '''SELECT lvx.daysec,lvx.X1, lvx.Y1,lvx.Z1,lvx.hell AS he1,gps.X1 AS X2,gps.Y1 AS Y2,gps.Z1 AS Z2, gps.[H-Ell] AS he2, lvx.hell - gps.[H-Ell] AS h12,lvx.roll - gps.Roll AS rolldis,lvx.pitch - gps.Pitch  AS pitchdis,lvx.heading - gps.Heading AS headingdis FROM lvxtabname lvx, gpstabname gps WHERE lvx.daysec = gps.GPS and abs(lvx.X1-gps.X1)<15 and abs(lvx.Y1-gps.Y1)<15;'''
 
-        sql= 'SELECT lvx.daysec,lvx.X1, lvx.Y1,lvx.Z1,lvx.hell AS he1,gps.X1 AS X2,gps.Y1 AS Y2,gps.Z1 AS Z2, gps.[H-Ell] AS he2, lvx.hell - gps.[H-Ell] AS h12,lvx.roll - gps.Roll - (%f) AS rolldis,lvx.pitch - gps.Pitch- (%f) AS pitchdis,lvx.heading - gps.Heading- (%f) AS headingdis FROM lvxtabname lvx, gpstabname gps WHERE lvx.daysec = gps.GPS and abs(lvx.X1-gps.X1)<15 and abs(lvx.Y1-gps.Y1)<15;' %(self.sys_prh[1],self.sys_prh[0],self.sys_prh[2])
+        sql= 'SELECT lvx.daysec,lvx.X1, lvx.Y1,lvx.Z1,lvx.hell AS he1,gps.X1 AS X2,gps.Y1 AS Y2,gps.Z1 AS Z2, gps.[H-Ell] AS he2, lvx.hell - gps.[H-Ell] AS h12,lvx.roll - gps.Roll - (%f) AS rolldis,lvx.pitch - gps.Pitch- (%f) AS pitchdis,lvx.heading - gps.Heading- (%f) AS headingdis FROM lvxtabname lvx, gpstabname gps WHERE lvx.daysec = gps.GPS and abs(lvx.hell - gps.[H-Ell])<15 and (gps.X1-lvx.X1)*(gps.X1-lvx.X1)+(gps.Y1-lvx.Y1)*(gps.Y1-lvx.Y1)<225;' %(self.sys_prh[1],self.sys_prh[0],self.sys_prh[2])
         # sql= 'SELECT lvx.daysec,lvx.X1, lvx.Y1,lvx.Z1,lvx.hell AS he1,gps.X1 AS X2,gps.Y1 AS Y2,gps.Z1 AS Z2,gps.[H-Ell] AS he2, lvx.hell - gps.[H-Ell] AS h12,lvx.roll - gps.Roll - 0.66475 AS rolldis,lvx.pitch -gps.Pitch -0.8507  AS pitchdis, lvx.heading - gps.Heading AS headingdis FROM lvxtabname lvx,gpstabname gps WHERE lvx.daysec = gps.GPS and abs(lvx.X1-gps.X1)<15 and abs(lvx.Y1-gps.Y1)<15;' 
         sql = sql.replace('gpstabname', gpstab).replace('lvxtabname', lvxtab)
         print(sql)
@@ -735,8 +739,8 @@ class main():
     def pro5(self):  #定位与姿态角相关性分析
        for var in os.listdir(self.path):
            if os.path.isdir(self.path+var):
-               self.locrelation_rms(var)   #定位
-            #    self.angrelation_rms(var)   #姿态角
+            #    self.locrelation_rms(var)   #定位
+               self.angrelation_rms(var)   #姿态角
                
             #    rms = self.dis_sta(var)
             #    self.RMS.append(rms)
@@ -750,9 +754,9 @@ class main():
 
 if __name__ == '__main__':
     ex = main()
-    # ex.pro1()
+    ex.pro1()
     # ex.pro2()
     # ex.pro3()
     # ex.pro4()
-    ex.pro5() #计算相关系数
+    # ex.pro5() #计算相关系数
     # ex.pro6()
